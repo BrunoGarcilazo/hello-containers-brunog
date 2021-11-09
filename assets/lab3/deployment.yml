@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-nuevo-brunog-pyxis
+  namespace: default
+  labels:
+     app: deploy-nuevo-brunog-pyxis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: deploy-nuevo-brunog-pyxis
+  template:
+    metadata:
+      labels:
+        app: deploy-nuevo-brunog-pyxis
+    spec:
+      containers:
+      - name: deploy-nuevo-brunog-pyxis
+        image: us.icr.io/<namespace>/<image>:<tag>
+        ports:
+          - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: servicio-nuevo-brunog-pyxis
+  namespace: default
+spec:
+  type: ClusterIP
+  selector:
+    app: deploy-nuevo-brunog-pyxis
+  ports:
+    - port: 8080
+      targetPort: 8080
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+    name: ruta-brunog-pyxis
+    namespace: default
+spec:
+    to:
+        kind: Service
+        name: servicio-nuevo-brunog-pyxis
